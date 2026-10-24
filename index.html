@@ -1,0 +1,16 @@
+<!doctype html><html><head><meta charset=utf-8><title>Charter attestation verifier</title>
+<style>body{font:14px monospace;background:#111;color:#ddd;max-width:720px;margin:2em auto;padding:0 1em}
+input,select,button{background:#222;color:#ddd;border:1px solid #444;padding:6px;margin:3px 0;width:100%}
+button{cursor:pointer;width:auto}.ok{color:#6f6}.bad{color:#f66}pre{background:#1a1a1a;padding:1em;overflow:auto}</style></head><body>
+<h2>Charter attestation verifier (EAS on Base)</h2>
+<input id=uid placeholder="attestation UID 0x...">
+<select id=net><option>base</option><option>base-sepolia</option></select>
+<button onclick="go()">Verify</button><div id=rows></div><pre id=out></pre>
+<script type=module>
+import{verifyAttestation}from'./verifier.mjs';
+window.go=async()=>{rows.innerHTML='';out.textContent='loading...';
+try{const r=await verifyAttestation({uid:uid.value,network:net.value});
+for(const t of r.texts){const d=document.createElement('div');
+d.className=t.match?'ok':'bad';d.textContent=`${t.name} ${t.cid} ${t.match?'MATCH':'MISMATCH'} ${t.sha256||t.error||''}`;rows.appendChild(d)}
+out.textContent=JSON.stringify(r.attestation,null,2)}catch(e){out.textContent=e.message}};
+</script></body></html>
